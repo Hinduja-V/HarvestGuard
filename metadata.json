@@ -1,0 +1,8 @@
+{
+  "name": "HarvestGuard AI",
+  "description": "AI-powered produce freshness assistant and sell-first inventory decision support for small fruit and vegetable vendors.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
