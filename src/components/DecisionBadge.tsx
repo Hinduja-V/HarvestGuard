@@ -11,6 +11,14 @@ export default function DecisionBadge({
   priority,
   size = 'md'
 }: DecisionBadgeProps) {
+  const priorityLabel = priority
+    ? {
+        NORMAL: 'Priority Normal',
+        HIGH: 'SELL FIRST',
+        REMOVE: 'REMOVE',
+      }[priority]
+    : undefined;
+
   const sizeClasses = {
     sm: 'text-xs px-2 py-0.5 gap-1.5',
     md: 'text-xs px-2.5 py-1 gap-1.5 font-medium',
@@ -22,8 +30,8 @@ export default function DecisionBadge({
       <span className={`inline-flex items-center rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/80 ${sizeClasses[size]}`}>
         <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
         <span>Fresh</span>
-        {priority && (
-          <span className="text-emerald-700/80 font-normal">· Priority Normal</span>
+        {priorityLabel && (
+          <span className="text-emerald-700/80 font-normal">· {priorityLabel}</span>
         )}
       </span>
     );
@@ -34,20 +42,31 @@ export default function DecisionBadge({
       <span className={`inline-flex items-center rounded-md bg-amber-50 text-amber-900 border border-amber-300 ${sizeClasses[size]}`}>
         <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
         <span className="font-semibold">Aging</span>
-        {priority && (
-          <span className="text-amber-800 font-bold">· SELL FIRST</span>
+        {priorityLabel && (
+          <span className="text-amber-800 font-bold">· {priorityLabel}</span>
         )}
       </span>
     );
   }
 
-  // Spoiled
+  if (condition === 'Rotten') {
+    return (
+      <span className={`inline-flex items-center rounded-md bg-rose-50 text-rose-800 border border-rose-300 ${sizeClasses[size]}`}>
+        <span className="w-2 h-2 rounded-full bg-rose-600" />
+        <span className="font-semibold">Rotten</span>
+        {priorityLabel && (
+          <span className="text-rose-700 font-medium">· {priorityLabel}</span>
+        )}
+      </span>
+    );
+  }
+
   return (
     <span className={`inline-flex items-center rounded-md bg-rose-50 text-rose-800 border border-rose-300 ${sizeClasses[size]}`}>
       <span className="w-2 h-2 rounded-full bg-rose-600" />
       <span className="font-semibold">Spoiled</span>
-      {priority && (
-        <span className="text-rose-700 font-medium">· REMOVE</span>
+      {priorityLabel && (
+        <span className="text-rose-700 font-medium">· {priorityLabel}</span>
       )}
     </span>
   );

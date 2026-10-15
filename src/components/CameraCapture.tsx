@@ -138,7 +138,7 @@ export default function CameraCapture({ isOpen, onClose, onCapture }: CameraCapt
               {/* Target Aim Reticle */}
               <div className="absolute inset-8 border-2 border-dashed border-white/50 rounded-xl pointer-events-none flex items-center justify-center">
                 <span className="text-white/70 text-xs bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
-                  Center tomato inside frame
+                  Center produce inside frame
                 </span>
               </div>
             </>

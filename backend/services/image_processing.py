@@ -1,10 +1,13 @@
+
 """
 HarvestGuard AI - Image Processing Service
 Handles image validation, Pillow resizing, RGB conversion, and normalization.
 """
 
 import io
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Optional, Tuple
+
+import tensorflow as tf
 
 try:
     from PIL import Image
@@ -13,47 +16,74 @@ except ImportError:
     Image = None
     np = None
 
-ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+ALLOWED_IMAGE_TYPES = {
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/jpg"
+}
+
 TARGET_SIZE: Tuple[int, int] = (224, 224)
 
-def validate_and_preprocess_image(file_bytes: bytes) -> Dict[str, Any]:
+
+def validate_and_preprocess_image(
+    file_bytes: bytes,
+    *,
+    resampling: Optional[int] = None,
+    training_preprocessing: bool = False,
+) -> Dict[str, Any]:
     """
-    Validates uploaded image byte stream, checks dimensions, converts to RGB,
-    and returns preprocessed array and metadata.
+    Validate image data, convert it to RGB, resize it,
+    normalize pixels, and return the processed image.
     """
+
     if not file_bytes:
-        raise ValueError("No image data provided. Please upload an image.")
+        raise ValueError(
+            "No image data provided. Please upload an image."
+        )
 
     if Image is None:
-        return {
-            "status": "pillow_unavailable",
-            "message": "Pillow not installed in this environment"
-        }
+        raise RuntimeError(
+            "Pillow is not installed. Install it using pip install Pillow."
+        )
 
     try:
         img = Image.open(io.BytesIO(file_bytes))
-        img.verify()  # Verify image integrity
+        img.verify()
     except Exception as e:
-        raise ValueError("Invalid image file format. Please upload a clear JPEG, PNG, or WebP photo.") from e
+        raise ValueError(
+            "Invalid image file. Upload a valid JPEG, PNG, or WebP image."
+        ) from e
 
-    # Re-open after verify() closes the file
-    img = Image.open(io.BytesIO(file_bytes))
-    original_size = img.size
+    try:
+        # Reopen the image after verification
+        img = Image.open(io.BytesIO(file_bytes))
+        original_size = img.size
 
-    # Convert color mode to RGB (handles RGBA, Grayscale, etc.)
-    if img.mode != "RGB":
-        img = img.convert("RGB")
+        if img.mode != "RGB":
+            img = img.convert("RGB")
 
-    # Resize to model standard input dimensions using high-quality lanczos filter
-    img_resized = img.resize(TARGET_SIZE, Image.Resampling.LANCZOS)
+        if training_preprocessing:
+            image_array = np.asarray(img, dtype=np.uint8)
+            resized_tensor = tf.image.resize(image_array, TARGET_SIZE)
+            image_tensor = tf.keras.applications.mobilenet_v2.preprocess_input(
+                resized_tensor
+            )
+            img_tensor = tf.expand_dims(image_tensor, axis=0).numpy()
+            img_resized = img.resize(TARGET_SIZE, Image.Resampling.BILINEAR)
+        else:
+            img_resized = img.resize(
+                TARGET_SIZE,
+                Image.Resampling.LANCZOS if resampling is None else resampling,
+            )
+            img_array = np.array(img_resized, dtype=np.float32)
+            img_array = (img_array / 127.5) - 1.0
+            img_tensor = np.expand_dims(img_array, axis=0)
 
-    # Convert to numpy array if numpy is available
-    if np is not None:
-        img_array = np.array(img_resized, dtype=np.float32) / 255.0
-        # Expand dims for batch inference: (1, 224, 224, 3)
-        img_tensor = np.expand_dims(img_array, axis=0)
-    else:
-        img_tensor = None
+    except Exception as e:
+        raise ValueError(
+            "Invalid image file. Upload a valid JPEG, PNG, or WebP image."
+        ) from e
 
     return {
         "original_width": original_size[0],

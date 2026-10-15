@@ -1,16 +1,22 @@
-export type ProduceCondition = 'Fresh' | 'Aging' | 'Spoiled';
+export type TomatoCondition = 'Fresh' | 'Aging' | 'Spoiled';
+export type PotatoCondition = 'Fresh' | 'Rotten';
+export type ProduceCondition = TomatoCondition | PotatoCondition;
+export type ActiveProduce = 'Tomato' | 'Potato';
 export type PriorityLevel = 'NORMAL' | 'HIGH' | 'REMOVE';
 export type ActionType = 'REGULAR_STOCK' | 'SELL_FIRST' | 'SEPARATE_STOCK' | 'MANUAL_INSPECT';
 
-export interface PredictionProbabilities {
+export interface TomatoPredictionProbabilities {
   Fresh: number;
   Aging: number;
   Spoiled: number;
 }
 
-export interface PredictionResult {
-  produce: string;
-  prediction: ProduceCondition;
+export interface PotatoPredictionProbabilities {
+  Fresh: number;
+  Rotten: number;
+}
+
+interface PredictionResultBase {
   confidence: number;
   confidence_percentage: number;
   is_low_confidence: boolean;
@@ -19,12 +25,25 @@ export interface PredictionResult {
   recommendation: string;
   action_instruction: string;
   reason: string;
-  probabilities?: PredictionProbabilities;
   analysis_timestamp?: string;
   is_demo_mode?: boolean;
   image_preview?: string;
   warning?: string;
 }
+
+export interface TomatoPredictionResult extends PredictionResultBase {
+  produce: 'Tomato';
+  prediction: TomatoCondition;
+  probabilities?: TomatoPredictionProbabilities;
+}
+
+export interface PotatoPredictionResult extends PredictionResultBase {
+  produce: 'Potato';
+  prediction: PotatoCondition;
+  probabilities: PotatoPredictionProbabilities;
+}
+
+export type PredictionResult = TomatoPredictionResult | PotatoPredictionResult;
 
 export interface InventoryItem {
   id: string;

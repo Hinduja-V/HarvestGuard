@@ -19,7 +19,7 @@ import {
   resetInventoryToDemo, 
   saveInventoryItem 
 } from '../services/storage';
-import { InventoryItem, ProduceCondition } from '../types';
+import { InventoryItem, TomatoCondition } from '../types';
 import DecisionBadge from '../components/DecisionBadge';
 
 export default function InventoryPage() {
@@ -31,7 +31,7 @@ export default function InventoryPage() {
   const [newVariety, setNewVariety] = useState<string>('Standard Red');
   const [newQuantity, setNewQuantity] = useState<number>(10);
   const [newUnit, setNewUnit] = useState<string>('kg');
-  const [newCondition, setNewCondition] = useState<ProduceCondition>('Aging');
+  const [newCondition, setNewCondition] = useState<TomatoCondition>('Aging');
   const [newNotes, setNewNotes] = useState<string>('Prioritize for morning display');
 
   useEffect(() => {
@@ -215,7 +215,9 @@ export default function InventoryPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-lg">🍅</span>
+                      <span className="text-lg">
+                        {item.produce === 'Potato' ? '🥔' : '🍅'}
+                      </span>
                       <h3 className="font-bold text-slate-900 text-base font-display">
                         {item.produce}
                       </h3>
@@ -363,7 +365,7 @@ export default function InventoryPage() {
                 </label>
                 <select
                   value={newCondition}
-                  onChange={(e) => setNewCondition(e.target.value as ProduceCondition)}
+                  onChange={(e) => setNewCondition(e.target.value as TomatoCondition)}
                   className="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-emerald-600 focus:outline-none font-medium"
                 >
                   <option value="Fresh">🟢 Fresh (Priority: NORMAL)</option>

@@ -34,7 +34,9 @@ export default function DashboardPage() {
   const totalScanned = Math.max(24, scans.length + 19);
   const agingScanned = scans.filter(s => s.prediction === 'Aging').length + 5;
   const freshScanned = scans.filter(s => s.prediction === 'Fresh').length + 13;
-  const spoiledScanned = scans.filter(s => s.prediction === 'Spoiled').length + 2;
+  const spoiledScanned = scans.filter(
+    s => s.prediction === 'Spoiled' || s.prediction === 'Rotten'
+  ).length + 2;
   const sellFirstItems = agingScanned;
 
   const totalCalculated = freshScanned + agingScanned + spoiledScanned;
@@ -127,7 +129,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-rose-300 ring-1 ring-rose-300/40 shadow-sm">
-            <span className="text-xs font-semibold text-rose-800 block">Spoiled Items</span>
+            <span className="text-xs font-semibold text-rose-800 block">Spoiled / Rotten</span>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-rose-900 mt-1">
               {spoiledScanned}
             </div>
@@ -178,7 +180,7 @@ export default function DashboardPage() {
             <div 
               style={{ width: `${spoiledPct}%` }} 
               className="bg-rose-500 transition-all duration-500 flex items-center justify-center text-[10px] text-white font-bold"
-              title={`Spoiled: ${spoiledPct}%`}
+              title={`Spoiled or rotten: ${spoiledPct}%`}
             >
               {spoiledPct > 10 && `${spoiledPct}%`}
             </div>
@@ -196,7 +198,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-md bg-rose-500" />
-              <span>Spoiled — Remove ({spoiledScanned} items · {spoiledPct}%)</span>
+              <span>Spoiled / Rotten — Remove ({spoiledScanned} items · {spoiledPct}%)</span>
             </div>
           </div>
         </div>
@@ -250,7 +252,7 @@ export default function DashboardPage() {
                       {record.date}
                     </td>
                     <td className="py-3 px-6 font-medium text-slate-900 flex items-center gap-1.5">
-                      <span>🍅</span>
+                      <span>{record.produce === 'Potato' ? '🥔' : '🍅'}</span>
                       <span>{record.produce}</span>
                     </td>
                     <td className="py-3 px-6">
@@ -263,7 +265,7 @@ export default function DashboardPage() {
                       <span className={
                         record.prediction === 'Aging' 
                           ? 'text-amber-800 font-bold' 
-                          : record.prediction === 'Spoiled'
+                          : record.prediction === 'Spoiled' || record.prediction === 'Rotten'
                           ? 'text-rose-700 font-bold'
                           : 'text-emerald-800'
                       }>

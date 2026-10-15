@@ -1,0 +1,18 @@
+{
+  "produce": "Potato",
+  "class_names": [
+    "Fresh",
+    "Rotten"
+  ],
+  "folder_to_label": {
+    "freshpotato": 0,
+    "rottenpotato": 1
+  },
+  "image_size": [
+    224,
+    224
+  ],
+  "preprocessing": "mobilenet_v2_preprocess_input",
+  "validation_split": 0.2,
+  "seed": 42
+}
