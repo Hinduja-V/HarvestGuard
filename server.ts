@@ -124,9 +124,9 @@ async function startServer() {
     }
   }
 
-  const server = app.listen(port, '127.0.0.1', () => {
-    console.log(`HarvestGuard AI server running on http://localhost:${port}`);
-    console.log(`Health check: http://localhost:${port}/api/health`);
+  const server = app.listen(port, '0.0.0.0', () => {
+   console.log(`HarvestGuard AI server running on port ${port}`);
+console.log(`Health check: /api/health`);
   });
 
   server.on('error', (error: NodeJS.ErrnoException) => {
